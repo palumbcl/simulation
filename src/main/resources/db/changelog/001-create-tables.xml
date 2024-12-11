@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Création de la table CAPTEUR -->
+    <changeSet id="1-create-capteur" author="Clément">
+        <createTable tableName="CAPTEUR">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="coordonnee_X" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="coordonnee_Y" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="temperature" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="portee" type="INT" defaultValueNumeric="500">
+                <constraints nullable="false"/>
+            </column>
+            <column name="etat" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Création de la table FEU_SIMULE -->
+    <changeSet id="2-create-feu-simule" author="Clément">
+        <createTable tableName="FEU_SIMULE">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="coordonnee_X" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="coordonnee_Y" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="intensite" type="INT" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="statut" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_apparition" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_extinction" type="TIMESTAMP" />
+        </createTable>
+    </changeSet>
+
+    <!-- Création de la table DETECTION -->
+    <changeSet id="3-create-detection" author="Clément">
+        <createTable tableName="DETECTION">
+            <column name="id_capteur" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_feu_simule" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="temperature" type="DOUBLE" />
+            <column name="date_detection" type="TIMESTAMP" />
+        </createTable>
+
+        <!-- Clé primaire composite -->
+        <addPrimaryKey columnNames="id_capteur,id_feu_simule" tableName="DETECTION" constraintName="pk_detection" />
+
+        <!-- Clés étrangères -->
+        <addForeignKeyConstraint baseTableName="DETECTION"
+                                 baseColumnNames="id_capteur"
+                                 referencedTableName="CAPTEUR"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_detection_capteur" />
+
+        <addForeignKeyConstraint baseTableName="DETECTION"
+                                 baseColumnNames="id_feu_simule"
+                                 referencedTableName="FEU_SIMULE"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_detection_feu_simule" />
+    </changeSet>
+
+</databaseChangeLog>
